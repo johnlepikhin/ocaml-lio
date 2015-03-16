@@ -42,10 +42,8 @@ let iblock_backstore_of_path = backstore_of_path BackstoreGroup.iblock_of_name B
 
 let get_backstores bs_fn t =
 	let lun_path = path t in
-	Printf.printf "lun path = %s\n" (Path.path lun_path |> BatPathGen.OfString.to_string);
 	Fsutil.filter_symlinks (fun name stat link ->
 		let module P = BatPathGen.OfString in
-		Printf.printf "link = %s\n" (BatPathGen.OfString.to_string link);
 		let backstore = P.concat (Path.path lun_path) link |> P.normalize_in_tree |> bs_fn in
 		Some { backstore; name }
 	) lun_path
