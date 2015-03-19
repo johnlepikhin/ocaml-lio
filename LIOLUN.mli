@@ -1,7 +1,7 @@
 
-open Common
+open LIOCommon
 
-type 'a t constraint 'a = Common.iscsi
+type 'a t constraint 'a = iscsi
 
 type 'a backstore = {
 	name : string;

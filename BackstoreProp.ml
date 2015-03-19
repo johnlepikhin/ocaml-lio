@@ -1,5 +1,5 @@
-open Common
-open Prop
+open LIOCommon
+open LIOProp
 
 module BackstoreBool = struct include PBool type path_t = backstore end
 module BackstoreString = struct include PString type path_t = backstore end
@@ -16,7 +16,7 @@ module FIOControl =
 		include WOMake(
 			struct
 				type t = _t
-				type path_t = Common.fileio
+				type path_t = LIOCommon.fileio
 
 				let name = "control"
 
@@ -43,11 +43,11 @@ module FIOInfo =
 		include ROMake(
 			struct
 				type t = _t
-				type path_t = Common.fileio
+				type path_t = LIOCommon.fileio
 
 				let name = "info"
 
-				open Ext
+				open LIOExt
 
 				let rex = Pcre.regexp ("^Status: (\\S+)  Max Queue Depth: (\\d+)  SectorSize: (\\d+)  HwMaxSectors: (\\d+)\n"
 					^ "\\s*TCM FILEIO ID: \\d+\\s+File: (.*?)  Size: (\\d+)  Mode: (.*)$")

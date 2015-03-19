@@ -1,5 +1,5 @@
 
-open Common
+open LIOCommon
 
 type iscsi = {
 	iqn : IQN.t;
@@ -11,7 +11,7 @@ type entry =
 type 'a t = {
 	frontend: 'a Frontend.t;
 	entry : entry;
-} constraint 'a = [< Common.fabric ]
+} constraint 'a = [< fabric ]
 
 let path t =
 	let frontend = Frontend.path t.frontend in
@@ -27,12 +27,12 @@ let init entry frontend =
 let create_iscsi frontend iqn =
 	let iscsi = { iqn } in
 	let t = init (ISCSI iscsi) frontend in
-	path t |> Fsutil.mkdir;
+	path t |> LIOFSUtil.mkdir;
 	t
 
 let find_iscsi frontend =
 	Frontend.path frontend
-	|> Fsutil.filter_subdirs (fun (name, stat) ->
+	|> LIOFSUtil.filter_subdirs (fun (name, stat) ->
 		try
 			let iqn = IQN.of_string name in
 			Some {

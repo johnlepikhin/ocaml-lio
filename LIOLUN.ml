@@ -1,10 +1,10 @@
 
-open Common
+open LIOCommon
 
 type 'a t = {
 	tpgt : 'a TPGT.t;
 	id : int;
-} constraint 'a = Common.iscsi
+} constraint 'a = iscsi
 
 type 'a backstore = {
 	name : string;
@@ -16,7 +16,7 @@ let path t = Path.lun (TPGT.path t.tpgt) t.id
 let get tpgt =
 	TPGT.path tpgt
 	|> Path.lun_container
-	|> Fsutil.filter_subdirs (fun (name, stat) -> try Scanf.sscanf name "lun_%i" (fun id -> Some { tpgt; id }) with _ -> None)
+	|> LIOFSUtil.filter_subdirs (fun (name, stat) -> try Scanf.sscanf name "lun_%i" (fun id -> Some { tpgt; id }) with _ -> None)
 
 let get_next lst =
 	let open BatList in
@@ -25,7 +25,7 @@ let get_next lst =
 let create tpgt =
 	let id = get tpgt |> get_next in
 	let t = { tpgt; id } in
-	path t |> Fsutil.mkdir;
+	path t |> LIOFSUtil.mkdir;
 	t
 
 let backstore_of_path bg_fn b_fn path =
@@ -42,7 +42,7 @@ let iblock_backstore_of_path = backstore_of_path BackstoreGroup.iblock_of_name B
 
 let get_backstores bs_fn t =
 	let lun_path = path t in
-	Fsutil.filter_symlinks (fun name stat link ->
+	LIOFSUtil.filter_symlinks (fun name stat link ->
 		let module P = BatPathGen.OfString in
 		let backstore = P.concat (Path.path lun_path) link |> P.normalize_in_tree |> bs_fn in
 		Some { backstore; name }

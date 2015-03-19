@@ -1,11 +1,11 @@
 
-open Common
+open LIOCommon
 
-type 'a t constraint 'a = [< Common.fabric ]
+type 'a t constraint 'a = [< fabric ]
 
 val path: iscsi t -> iscsi tpgt Path.t
 
-val get: iscsi Node.t -> iscsi t list
+val get: iscsi LIONode.t -> iscsi t list
 
-val create: iscsi Node.t -> iscsi t
+val create: iscsi LIONode.t -> iscsi t
 

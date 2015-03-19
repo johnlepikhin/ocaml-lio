@@ -12,6 +12,7 @@ type fabric = [ | iscsi ]
 type 'a group constraint 'a = [< backstore ]
 
 type file = [ | `File ]
+type blockdev = [ | `Blockdev ]
 
 type 'a frontend constraint 'a = [< fabric ]
 
@@ -46,6 +47,8 @@ module Path
 		val lioroot: BatPathGen.OfString.t -> lioroot t
 		val core: lioroot t -> core t
 		val iscsi: lioroot t -> iscsi t
+
+		val blockdev: BatPathGen.OfString.t -> blockdev t
 		val file: BatPathGen.OfString.t -> file t
 
 		val backstore_group_fileio: core t -> int -> [> fileio ] group t
@@ -69,6 +72,7 @@ module Path
 		let lioroot t = t
 		let core root = P.append root "core"
 		let iscsi root = P.append root "iscsi"
+		let blockdev t = t
 		let file t = t
 
 		let backstore_group_fileio core id = P.append core (Printf.sprintf "fileio_%i" id)

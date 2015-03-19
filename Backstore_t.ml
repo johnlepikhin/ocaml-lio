@@ -1,10 +1,12 @@
+open LIOCommon
+
 type fileio = {
 	file : BatPathGen.OfString.t;
-	backstore_group : Common.fileio BackstoreGroup.t;
+	backstore_group : LIOCommon.fileio BackstoreGroup.t;
 }
 
 type iblock = {
-	backstore_group : Common.iblock BackstoreGroup.t;
+	backstore_group : LIOCommon.iblock BackstoreGroup.t;
 }
 
 type specific =
@@ -13,7 +15,7 @@ type specific =
 
 type 'a t = {
 	name : string;
-	path : Common.backstore Common.Path.t;
+	path : backstore Path.t;
 	specific : specific;
 }
 

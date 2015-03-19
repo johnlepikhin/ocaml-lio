@@ -1,5 +1,5 @@
 
-open Common
+open LIOCommon
 
 type entry =
 	| ISCSI
@@ -12,7 +12,7 @@ type 'a t = {
 let path t = t.path
 
 let create entry path =
-	Fsutil.mkdir path;
+	LIOFSUtil.mkdir path;
 	{
 		path;
 		entry;
@@ -22,7 +22,7 @@ let create_iscsi root =
 	Path.iscsi root |> create ISCSI
 
 let get_iscsi root =
-	if Fsutil.has_subdir root "iscsi" then
+	if LIOFSUtil.has_subdir root "iscsi" then
 		{
 			path = Path.iscsi root;
 			entry = ISCSI;

@@ -1,4 +1,4 @@
-open Common
+open LIOCommon
 
 type entry =
 	| Fileio
@@ -16,7 +16,7 @@ let iblock_path t = Path.backstore_group_iblock t.core t.id
 
 let find core entry fn =
 	let f id = { id; core; entry } in
-	Fsutil.filter_subdirs (fun (name, stat) -> try Some (fn name f) with _ -> None) core
+	LIOFSUtil.filter_subdirs (fun (name, stat) -> try Some (fn name f) with _ -> None) core
 
 let scan_fileio name fn = Scanf.sscanf name "fileio_%i" fn
 let scan_iblock name fn = Scanf.sscanf name "iblock_%i" fn
@@ -38,13 +38,13 @@ let init entry core lst =
 
 let create_fileio core =
 	let t = find_fileio core |> init Fileio core in
-	fileio_path t |> Fsutil.mkdir;
+	fileio_path t |> LIOFSUtil.mkdir;
 	t
 
 let create_iblock core =
 	let t = find_iblock core |> init Iblock core in
-	iblock_path t |> Fsutil.mkdir;
+	iblock_path t |> LIOFSUtil.mkdir;
 	t
 
-let delete_fileio t = fileio_path t |> Fsutil.rmdir
-let delete_iblock t = iblock_path t |> Fsutil.rmdir
+let delete_fileio t = fileio_path t |> LIOFSUtil.rmdir
+let delete_iblock t = iblock_path t |> LIOFSUtil.rmdir

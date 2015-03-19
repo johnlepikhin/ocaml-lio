@@ -1,7 +1,7 @@
 
-open Common
+open LIOCommon
 
-type 'a t constraint 'a = [< Common.fabric ]
+type 'a t constraint 'a = [< fabric ]
 
 val path: iscsi t -> iscsi node Path.t
 

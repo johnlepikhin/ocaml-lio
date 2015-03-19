@@ -1,4 +1,4 @@
-open Common
+open LIOCommon
 open Backstore_t
 
 type 'a t = 'a Backstore_t.t constraint 'a = [< backstore ]
@@ -33,7 +33,7 @@ let iblock_of_name group name =
 	of_path specific group (Path.as_backstore iblock_path) name
 
 let find fn group path =
-	Fsutil.filter_subdirs (fun (name, stat) -> Some (fn group name)) path
+	LIOFSUtil.filter_subdirs (fun (name, stat) -> Some (fn group name)) path
 
 let find_fileio group =
 	let group_path = BackstoreGroup.fileio_path group in
@@ -47,17 +47,17 @@ let path t = t.path
 
 let create_fileio ~group ~name file size =
 	let path = Path.backstore (BackstoreGroup.fileio_path group) name in
-	Fsutil.mkdir path;
+	LIOFSUtil.mkdir path;
 	BackstoreProp.FIOControl.(set path { file; size });
 	fileio_of_name group name
 
 let create_iblock ~group ~name blockdev =
 	let path = Path.backstore (BackstoreGroup.iblock_path group) name in
-	Fsutil.mkdir path;
+	LIOFSUtil.mkdir path;
 	iblock_of_name group name
 
 let delete t =
-	Fsutil.rmdir t.path
+	LIOFSUtil.rmdir t.path
 
 (*
 let to_backstore t = t
