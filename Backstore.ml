@@ -1,7 +1,24 @@
 open LIOCommon
-open Backstore_t
 
-type 'a t = 'a Backstore_t.t constraint 'a = [< backstore ]
+type fileio = {
+	file : BatPathGen.OfString.t;
+	backstore_group : LIOCommon.fileio BackstoreGroup.t;
+}
+
+type iblock = {
+	backstore_group : LIOCommon.iblock BackstoreGroup.t;
+}
+
+type specific =
+	| Fileio of fileio
+	| Iblock of iblock
+
+type 'a t = {
+	name : string;
+	path : backstore Path.t;
+	specific : specific;
+} constraint 'a = [< backstore ]
+
 type 'a set = 'a t list
 
 let of_path specific group path name =
