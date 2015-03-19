@@ -14,14 +14,14 @@ type t = {
 	kernel_minor : int;
 	kernel_read_ahead : string;
 	size : int;
-	metadata_size : int;
+	metadata_size : int option;
 	seg_count : int;
 	origin : string;
 	origin_size : int;
-	data_percent : float;
-	snap_percent : float;
-	metadata_percent : float;
-	copy_percent : float;
+	data_percent : float option;
+	snap_percent : float option;
+	metadata_percent : float option;
+	copy_percent : float option;
 	move_pv : string;
 	current_lv : string;
 	mirror_log : string;
@@ -39,10 +39,10 @@ let list () =
 	listread ~options:",vg_all" "lv" |> List.map (fun lst ->
 		{
 			uuid = get_string "LVM2_LV_UUID" lst;
-			name = get_string "LVM2_PV_NAME" lst;
-			vg_name = get_string "LVM2_VG_NAMELVM2_VG_NAME" lst;
+			name = get_string "LVM2_LV_NAME" lst;
+			vg_name = get_string "LVM2_VG_NAME" lst;
 			path = get_string "LVM2_LV_PATH" lst |> BatPathGen.OfString.of_string |> Path.blockdev;
-			attr = get_string "LVM2_PV_ATTR" lst;
+			attr = get_string "LVM2_LV_ATTR" lst;
 			major = get_int "LVM2_LV_MAJOR" lst;
 			minor = get_int "LVM2_LV_MINOR" lst;
 			read_ahead = get_string "LVM2_LV_READ_AHEAD" lst;
@@ -50,14 +50,14 @@ let list () =
 			kernel_minor = get_int "LVM2_LV_KERNEL_MINOR" lst;
 			kernel_read_ahead = get_string "LVM2_LV_KERNEL_READ_AHEAD" lst;
 			size = get_int "LVM2_LV_SIZE" lst;
-			metadata_size = get_int "LVM2_LV_METADATA_SIZE" lst;
+			metadata_size = get_int_option "LVM2_LV_METADATA_SIZE" lst;
 			seg_count = get_int "LVM2_SEG_COUNT" lst;
 			origin = get_string "LVM2_ORIGIN" lst;
 			origin_size = get_int "LVM2_ORIGIN_SIZE" lst;
-			data_percent = get_float "LVM2_DATA_PERCENT" lst;
-			snap_percent = get_float "LVM2_SNAP_PERCENT" lst;
-			metadata_percent = get_float "LVM2_METADATA_PERCENT" lst;
-			copy_percent = get_float "LVM2_COPY_PERCENT" lst;
+			data_percent = get_float_option "LVM2_DATA_PERCENT" lst;
+			snap_percent = get_float_option "LVM2_SNAP_PERCENT" lst;
+			metadata_percent = get_float_option "LVM2_METADATA_PERCENT" lst;
+			copy_percent = get_float_option "LVM2_COPY_PERCENT" lst;
 			move_pv = get_string "LVM2_MOVE_PV" lst;
 			current_lv = get_string "LVM2_CONVERT_LV" lst;
 			mirror_log = get_string "LVM2_MIRROR_LOG" lst;

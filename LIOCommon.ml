@@ -61,6 +61,8 @@ module Path
 		val tpgt: 'a node t -> int -> 'a tpgt t
 		val lun_container: 'a tpgt t -> lun_container t
 		val lun: 'a tpgt t -> int -> lun t
+
+		val to_file: [> file | blockdev ] t -> file t
 	end
 	= struct
 		module P = BatPathGen.OfString
@@ -85,4 +87,6 @@ module Path
 		let tpgt t id = P.append t (Printf.sprintf "tpgt_%i" id)
 		let lun_container t = P.append t "lun"
 		let lun t id = P.append (lun_container t) (Printf.sprintf "lun_%i" id)
+
+		external to_file : [> file | blockdev ] t -> file t = "%identity"
 	end

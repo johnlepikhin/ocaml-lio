@@ -35,7 +35,7 @@ let list () =
 			attr = get_string "LVM2_PV_ATTR" lst;
 			pe_count = get_int "LVM2_PV_PE_COUNT" lst;
 			pa_alloc_count = get_int "LVM2_PV_PE_ALLOC_COUNT" lst;
-			tags = get_string "LVM2_PV_PE_ALLOC_COUNT" lst;
+			tags = get_string "LVM2_PV_TAGS" lst;
 			mda_count = get_int "LVM2_PV_MDA_COUNT" lst;
 			mda_used_count = get_int "LVM2_PV_MDA_USED_COUNT" lst;
 		}
