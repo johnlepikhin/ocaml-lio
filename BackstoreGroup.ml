@@ -1,4 +1,4 @@
-open LIOCommon
+open LIOTypes
 
 type entry =
 	| Fileio
@@ -31,20 +31,26 @@ let get_next lst =
 		let open BatList in
 		map (fun t -> t.id) lst |> max |> (+) 1
 
-let init entry core lst =
-	let id = get_next lst in
+let init ?id entry core lst =
+	let id =
+		match id with
+			| None -> get_next lst
+			| Some id -> id
+	in
 	let t = { id; entry; core } in
 	t
 
-let create_fileio core =
-	let t = find_fileio core |> init Fileio core in
-	fileio_path t |> LIOFSUtil.mkdir;
+let create_fileio ~ignore_current ?id core =
+	let t = find_fileio core |> init ?id Fileio core in
+	fileio_path t |> LIOFSUtil.mkdir ~ignore_current;
 	t
 
-let create_iblock core =
-	let t = find_iblock core |> init Iblock core in
-	iblock_path t |> LIOFSUtil.mkdir;
+let create_iblock ~ignore_current ?id core =
+	let t = find_iblock core |> init ?id Iblock core in
+	iblock_path t |> LIOFSUtil.mkdir ~ignore_current;
 	t
 
-let delete_fileio t = fileio_path t |> LIOFSUtil.rmdir
-let delete_iblock t = iblock_path t |> LIOFSUtil.rmdir
+let delete_fileio ~ignore_deleted t = fileio_path t |> LIOFSUtil.rmdir ~ignore_deleted
+let delete_iblock ~ignore_deleted t = iblock_path t |> LIOFSUtil.rmdir ~ignore_deleted
+
+let id t = t.id

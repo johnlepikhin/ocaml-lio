@@ -1,5 +1,5 @@
 
-open LIOCommon
+open LIOTypes
 
 type iscsi = {
 	iqn : IQN.t;
@@ -24,10 +24,10 @@ let init entry frontend =
 		entry;
 	}
 
-let create_iscsi frontend iqn =
+let create_iscsi ~ignore_current frontend iqn =
 	let iscsi = { iqn } in
 	let t = init (ISCSI iscsi) frontend in
-	path t |> LIOFSUtil.mkdir;
+	path t |> LIOFSUtil.mkdir ~ignore_current;
 	t
 
 let find_iscsi frontend =

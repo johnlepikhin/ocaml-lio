@@ -1,4 +1,4 @@
-open LIOCommon
+open LIOTypes
 
 exception InvalidValue
 

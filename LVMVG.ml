@@ -1,5 +1,5 @@
 
-open LIOCommon
+open LIOTypes
 
 type t = {
 	uuid : string;

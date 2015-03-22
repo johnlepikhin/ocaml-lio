@@ -1,5 +1,5 @@
 
-open LIOCommon
+open LIOTypes
 
 let readdir path =
 	Path.string path |> BatSys.readdir |> BatArray.to_list |> BatList.map (fun name ->
@@ -28,11 +28,28 @@ let filter_symlinks fn path =
 let has_subdir path name =
 	not ([] = filter_subdirs (function n, _ when name = n -> Some true | _ -> None) path)
 
-let mkdir path =
+let mkdir ~ignore_current path =
 	let path = Path.string path in
-	BatUnix.mkdir path 0o755
+	try
+		BatUnix.mkdir path 0o755
+	with
+		| Unix.Unix_error (Unix.EEXIST, _, _) when ignore_current -> ()
 
-let rmdir path =
-	Path.string path |> BatUnix.rmdir;
+let rmdir ~ignore_deleted path =
+	let path = Path.string path in
+	(try BatUnix.rmdir path with | Unix.Unix_error (Unix.ENOENT, _, _) when ignore_deleted -> ());
 	Deleted.return
 
+let with_chdir path f =
+	let open BatUnix in
+	let path = Path.string path in
+	let current = getcwd () in
+	chdir path;
+	try
+		let r = f () in
+		chdir current;
+		r
+	with
+		| e ->
+			chdir current;
+			raise e

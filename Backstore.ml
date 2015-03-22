@@ -1,12 +1,12 @@
-open LIOCommon
+open LIOTypes
 
 type fileio = {
 	file : BatPathGen.OfString.t;
-	backstore_group : LIOCommon.fileio BackstoreGroup.t;
+	backstore_group : LIOTypes.fileio BackstoreGroup.t;
 }
 
 type iblock = {
-	backstore_group : LIOCommon.iblock BackstoreGroup.t;
+	backstore_group : LIOTypes.iblock BackstoreGroup.t;
 }
 
 type specific =
@@ -20,6 +20,8 @@ type 'a t = {
 } constraint 'a = [< backstore ]
 
 type 'a set = 'a t list
+
+type size = int
 
 let of_path specific group path name =
 	{
@@ -62,21 +64,27 @@ let find_iblock group =
 
 let path t = t.path
 
-let create_fileio ~group ~name file size =
+external to_backstore : [< backstore ] t -> backstore t = "%identity"
+
+let create_fileio ~ignore_current ~group ~name file size =
 	let path = Path.backstore (BackstoreGroup.fileio_path group) name in
-	LIOFSUtil.mkdir path;
+	let bs_path = Path.as_backstore path in
+	LIOFSUtil.mkdir ~ignore_current path;
 	BackstoreProp.FIOControl.(set path { file; size });
+	BackstoreProp.UdevPath.set bs_path file;
+	BackstoreProp.Enable.set bs_path true;
 	fileio_of_name group name
 
-let create_iblock ~group ~name blockdev =
+let create_iblock ~ignore_current ~group ~name blockdev =
 	let path = Path.backstore (BackstoreGroup.iblock_path group) name in
-	LIOFSUtil.mkdir path;
+	LIOFSUtil.mkdir ~ignore_current path;
 	iblock_of_name group name
 
-let delete t =
-	LIOFSUtil.rmdir t.path
+let delete ~ignore_deleted t =
+	LIOFSUtil.rmdir ~ignore_deleted t.path
 
-(*
-let to_backstore t = t
-*)
-external to_backstore : [< backstore ] t -> backstore t = "%identity"
+let file_size path =
+	let path = Path.string path in
+	Unix.((stat path).st_size)
+
+let blockdev_size path = 0

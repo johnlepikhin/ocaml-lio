@@ -19,9 +19,11 @@ type 'a frontend constraint 'a = [< fabric ]
 type 'a node constraint 'a = [< fabric ]
 
 type 'a tpgt constraint 'a = [< fabric ]
+type tpgt_auth
 
 type lun_container
 type lun
+type np
 
 exception AlreadyExists
 
@@ -59,10 +61,12 @@ module Path
 
 		val node_iscsi: iscsi t -> IQN.t -> iscsi node t
 		val tpgt: 'a node t -> int -> 'a tpgt t
+		val tpgt_auth: 'a tpgt t -> tpgt_auth t
 		val lun_container: 'a tpgt t -> lun_container t
 		val lun: 'a tpgt t -> int -> lun t
+		val np: 'a tpgt t -> Unix.inet_addr -> int -> np t
 
-		val to_file: [> file | blockdev ] t -> file t
+		val to_file: [< file | blockdev ] t -> file t
 	end
 	= struct
 		module P = BatPathGen.OfString
@@ -85,8 +89,14 @@ module Path
 
 		let node_iscsi t iqn = IQN.string iqn |> P.append t
 		let tpgt t id = P.append t (Printf.sprintf "tpgt_%i" id)
+		let tpgt_auth t = P.append t "auth"
 		let lun_container t = P.append t "lun"
 		let lun t id = P.append (lun_container t) (Printf.sprintf "lun_%i" id)
 
-		external to_file : [> file | blockdev ] t -> file t = "%identity"
+		let np t inet_addr port =
+			let name = Printf.sprintf "%s:%i" (BatUnix.string_of_inet_addr inet_addr) port in
+			let path = P.append t "np" in
+			P.append path name
+
+		external to_file : [< file | blockdev ] t -> file t = "%identity"
 	end

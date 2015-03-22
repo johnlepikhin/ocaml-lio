@@ -26,3 +26,11 @@ module Unix =
 					| WEXITED code when code = success -> ()
 					| _ -> raise (ExecError (cmd, status))
 	end
+
+module BatList =
+	struct
+		include BatList
+
+		let next_int lst =
+			fold_left (fun prev cur -> Pervasives.max prev cur) (-1) lst |> (+) 1
+	end

@@ -1,4 +1,4 @@
-open LIOCommon
+open LIOTypes
 open LIOProp
 
 module BackstoreBool = struct include PBool type path_t = backstore end
@@ -16,14 +16,27 @@ module FIOControl =
 		include WOMake(
 			struct
 				type t = _t
-				type path_t = LIOCommon.fileio
+				type path_t = LIOTypes.fileio
 
 				let name = "control"
 
 				let set = set (fun t -> Printf.sprintf "fd_dev_name=%s,fd_dev_size=%i" (Path.string t.file) t.size)
 			end)
 	end
-		
+
+module UdevPath = RWMake(
+	struct
+		type t = file Path.t
+		type path_t = LIOTypes.backstore
+
+		let name = "udev_path"
+
+		let set = set Path.string
+
+		let get = get (fun s -> BatPathGen.OfString.of_string s |> Path.file)
+	end
+)
+
 module FIOInfo =
 	struct
 		type mode =
@@ -43,7 +56,7 @@ module FIOInfo =
 		include ROMake(
 			struct
 				type t = _t
-				type path_t = LIOCommon.fileio
+				type path_t = LIOTypes.fileio
 
 				let name = "info"
 

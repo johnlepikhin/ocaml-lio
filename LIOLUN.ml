@@ -1,5 +1,6 @@
 
-open LIOCommon
+open LIOTypes
+open LIOExt
 
 type 'a t = {
 	tpgt : 'a TPGT.t;
@@ -20,12 +21,12 @@ let get tpgt =
 
 let get_next lst =
 	let open BatList in
-	map (fun t -> t.id) lst |> max |> (+) 1
+	map (fun t -> t.id) lst |> next_int
 
-let create tpgt =
+let create ~ignore_current tpgt =
 	let id = get tpgt |> get_next in
 	let t = { tpgt; id } in
-	path t |> LIOFSUtil.mkdir;
+	path t |> LIOFSUtil.mkdir ~ignore_current;
 	t
 
 let backstore_of_path bg_fn b_fn path =
@@ -56,4 +57,4 @@ let add_backstore t backstore =
 	let bs_path = Backstore.path backstore.backstore |> Path.path in
 	let module P = BatPathGen.OfString in
 	let link_path = P.relative_to_any lun_path bs_path in
-	Unix.symlink (P.to_string link_path) (P.append lun_path backstore.name |> P.to_string)
+	LIOFSUtil.with_chdir (path t) (fun () -> Unix.symlink (P.to_string link_path) (P.append lun_path backstore.name |> P.to_string))
