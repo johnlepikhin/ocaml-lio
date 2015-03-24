@@ -18,7 +18,7 @@ let getlist tpgt =
 			Scanf.sscanf name "lun_%i" (fun id ->
 				let module P = BatPathGen.OfString in
 				let linkpath = Path.path lun_path in
-				let link = P.concat linkpath [name; Printf.sprintf "backstore_%i" id] |> P.to_string |> Unix.readlink in
+				let link = P.concat linkpath [Printf.sprintf "backstore_%i" id; name] |> P.to_string |> Unix.readlink in
 				Some (name, id, link, linkpath)
 			)
 		with
