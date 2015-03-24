@@ -71,9 +71,12 @@ let list () =
 		}
 	)
 
-let create_kb kb name (vg : LVMVG.t) =
+let create_kb ~ignore_current kb name (vg : LVMVG.t) =
 	let size = Printf.sprintf "%ik" kb in
-	LIOExt.Unix.arg_exec "/sbin/lvcreate" [| "lvcreate"; "-L"; size; "-n"; name; vg.LVMVG.name |]
+	try
+		LIOExt.Unix.arg_exec "/sbin/lvcreate" [| "lvcreate"; "-L"; size; "-n"; name; vg.LVMVG.name |]
+	with
+		| LIOExt.Unix.ExecError (_, Unix.WEXITED 5) when ignore_current -> ()
 
 let remove t =
 	LIOExt.Unix.arg_exec "/sbin/lvchange" [| "lvchange"; "-an"; Path.string t.path |];

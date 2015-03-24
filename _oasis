@@ -10,6 +10,6 @@ Plugins: META (0.4), DevFiles (0.4)
 
 Library "lio"
    Path: .
-   Modules: LIOTypes, BackstoreGroup, Backstore, BackstoreProp, Frontend, IQN, LIOLUN, LVMLV, LVMVG, LVMPV, LIONode, TPGT, TPGTProp
+   Modules: LIOTypes, BackstoreGroup, Backstore, BackstoreProp, Frontend, IQN, LIOLUN, LVMLV, LVMVG, LVMPV, LIONode, TPGT, TPGTProp, LIOACL, ACLProp, LIOACLLUN
    InternalModules: LIOExt, LIOFSUtil, LVM_grammar, LVM_lex, LVMutil, LIOProp
-   BuildDepends: lwt, lwt.unix, lwt.syntax, batteries, pcre
+   BuildDepends: batteries, pcre

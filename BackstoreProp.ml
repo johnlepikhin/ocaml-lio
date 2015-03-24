@@ -4,8 +4,8 @@ open LIOProp
 module BackstoreBool = struct include PBool type path_t = backstore end
 module BackstoreString = struct include PString type path_t = backstore end
 
-module Enable = RWMake(struct include BackstoreBool let name = "enable" end)
-module Alias = RWMake(struct include BackstoreString let name = "alias" end)
+module Enable = WOMake(struct include BackstoreBool let name = ["enable"] end)
+module Alias = RWMake(struct include BackstoreString let name = ["alias"] end)
 
 module FIOControl =
 	struct
@@ -18,7 +18,7 @@ module FIOControl =
 				type t = _t
 				type path_t = LIOTypes.fileio
 
-				let name = "control"
+				let name = ["control"]
 
 				let set = set (fun t -> Printf.sprintf "fd_dev_name=%s,fd_dev_size=%i" (Path.string t.file) t.size)
 			end)
@@ -29,7 +29,7 @@ module UdevPath = RWMake(
 		type t = file Path.t
 		type path_t = LIOTypes.backstore
 
-		let name = "udev_path"
+		let name = ["udev_path"]
 
 		let set = set Path.string
 
@@ -58,7 +58,7 @@ module FIOInfo =
 				type t = _t
 				type path_t = LIOTypes.fileio
 
-				let name = "info"
+				let name = ["info"]
 
 				open LIOExt
 

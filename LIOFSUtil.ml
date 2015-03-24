@@ -53,3 +53,10 @@ let with_chdir path f =
 		| e ->
 			chdir current;
 			raise e
+
+let symlink ~ignore_current p1 p2 =
+	try
+		BatUnix.symlink p1 p2
+	with
+		| Unix.Unix_error (Unix.EEXIST, _, _) when ignore_current -> ()
+

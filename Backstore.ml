@@ -31,9 +31,8 @@ let of_path specific group path name =
 	}
 
 let specific_fileio group path =
-	let module IP = BackstoreProp.FIOInfo in
-	let info = IP.get path in
-	let file = info.IP.file in
+	let module IP = BackstoreProp.UdevPath in
+	let file = IP.get (path :> backstore Path.t) |> Path.path in
 	Fileio { backstore_group = group; file }
 
 let specific_iblock group path =
@@ -43,13 +42,13 @@ let fileio_of_name group name =
 	let group_path = BackstoreGroup.fileio_path group in
 	let fileio_path = Path.backstore group_path name in
 	let specific = specific_fileio group fileio_path in
-	of_path specific group (Path.as_backstore fileio_path) name
+	of_path specific group (fileio_path :> backstore Path.t) name
 
 let iblock_of_name group name =
 	let group_path = BackstoreGroup.iblock_path group in
 	let iblock_path = Path.backstore group_path name in
 	let specific = specific_iblock group iblock_path in
-	of_path specific group (Path.as_backstore iblock_path) name
+	of_path specific group (iblock_path :> backstore Path.t) name
 
 let find fn group path =
 	LIOFSUtil.filter_subdirs (fun (name, stat) -> Some (fn group name)) path

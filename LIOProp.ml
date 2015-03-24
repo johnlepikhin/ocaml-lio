@@ -4,7 +4,10 @@ exception InvalidValue
 
 let set fn v path =
 	let v = fn v in
-	BatFile.with_file_out path (fun ch -> BatIO.nwrite ch v)
+	try
+		BatFile.with_file_out path (fun ch -> BatIO.nwrite ch v)
+	with
+		|  Sys_error "File exists" -> ()
 
 let get fn path =
 	BatFile.with_file_in path BatIO.read_all |> fn
@@ -14,7 +17,7 @@ module type COMMON =
 		type t
 		type path_t
 
-		val name: string
+		val name: string list
 	end
 
 module type WO =
@@ -38,11 +41,11 @@ module type RW =
 
 module CommonMake(T : COMMON)
 	: sig
-		val make_path': T.path_t Path.t -> string -> string
+		val make_path': T.path_t Path.t -> string list -> string
 	end
 	= struct
 		let make_path' path name =
-			BatPathGen.OfString.append (Path.path path) name |> BatPathGen.OfString.to_string
+			BatPathGen.OfString.concat (Path.path path) name |> BatPathGen.OfString.to_string
 	end
 
 module ROMake(T : RO)
@@ -64,7 +67,11 @@ module RWMake(T : RW)
 		include CommonMake(T)
 
 		let get path = make_path' path T.name |> T.get
-		let set path t = make_path' path T.name |> T.set t
+
+		let set path t =
+			let cur_t = get path in
+			if cur_t <> t then
+				make_path' path T.name |> T.set t
 	end
 
 module PBool =

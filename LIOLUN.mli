@@ -1,20 +1,14 @@
 
 open LIOTypes
 
-type 'a t constraint 'a = iscsi
+type ('frontend, 'backstore) t
+	constraint 'frontend = iscsi
+	constraint 'backstore = [< LIOTypes.backstore ]
 
-type 'a backstore = {
-	name : string;
-	backstore : 'a Backstore.t;
-}
+val path: ('frontend, 'backstore) t -> lun Path.t
 
-val path: 'a t -> lun Path.t
+val get_fileio: 'frontend TPGT.t -> ('frontend, fileio) t list
+val get_iblock: 'frontend TPGT.t -> ('frontend, iblock) t list
 
-val get: 'a TPGT.t -> 'a t list
+val create: ignore_current : bool -> 'frontend TPGT.t -> 'backstore Backstore.t -> ('frontend, 'backstore) t
 
-val create: ignore_current : bool -> 'a TPGT.t -> 'a t
-
-val get_fileio: 'a t -> fileio backstore list
-val get_iblock: 'a t -> iblock backstore list
-
-val add_backstore: 'a t -> 'b backstore -> unit
